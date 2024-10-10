@@ -1,115 +1,132 @@
-import Image from "next/image";
-import localFont from "next/font/local";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { SearchIcon, SparklesIcon } from "lucide-react";
 
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-});
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
-});
+export default function Component() {
+  const [messages, setMessages] = useState([]);
+  const [inputValue, setInputValue] = useState("");
 
-export default function Home() {
+  const suggestedPrompts = [
+    "Show latest transactions",
+    "Explain Starknet's Layer 2 solution",
+    "What are zkRollups?",
+  ];
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (inputValue.trim()) {
+      setMessages([...messages, { type: "user", content: inputValue }]);
+      // Simulating AI response
+      setTimeout(() => {
+        setMessages((prev) => [
+          ...prev,
+          {
+            type: "ai",
+            content: `Here's some information about "${inputValue}" on Starknet...`,
+          },
+        ]);
+      }, 1000);
+      setInputValue("");
+    }
+  };
+
   return (
-    <div
-      className={`${geistSans.variable} ${geistMono.variable} grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]`}
-    >
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/pages/index.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <div className="flex flex-col min-h-screen bg-gradient-to-br from-[#0C0C4F] to-[#1C1C6F] text-white font-inter">
+      <header className="p-6 flex justify-between items-center">
+        <div className="flex items-center gap-2">
+          <SparklesIcon className="h-5 w-5" />{" "}
+          <h1 className="text-2xl font-bold">Stark.ai </h1>
         </div>
+        {/* <nav className="space-x-4">
+          <Button variant="ghost" className="text-white hover:text-[#EC795B]">
+            About
+          </Button>
+          <Button variant="ghost" className="text-white hover:text-[#EC795B]">
+            Docs
+          </Button>
+        </nav> */}
+      </header>
+      <main className="flex-grow flex flex-col items-center justify-center p-6">
+        {messages.length === 0 ? (
+          <div className="w-full max-w-3xl space-y-8">
+            <div className="text-center space-y-4">
+              <h2 className="text-4xl font-bold">Explore Starknet with AI</h2>
+              <p className="text-xl text-white/80">
+                Search transactions, analyze smart contracts, and understand
+                blockchain concepts.
+              </p>
+            </div>
+            <div className="relative">
+              <form onSubmit={handleSubmit} className="flex items-center">
+                <Input
+                  type="text"
+                  placeholder="Search by transaction hash, address, or ask a question..."
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                  className="w-full bg-white/10 border-2 border-white/20 rounded-full py-6 px-6 pr-32 text-lg placeholder-white/50 focus:ring-2 focus:ring-[#EC795B] focus:border-transparent"
+                />
+                <div className="absolute right-2 flex items-center space-x-2">
+                  <Button
+                    type="submit"
+                    size="icon"
+                    className="bg-[#EC795B] hover:bg-[#D672EF] rounded-full"
+                  >
+                    <SearchIcon className="h-5 w-5" />
+                  </Button>
+                </div>
+              </form>
+            </div>
+            <div className="flex flex-wrap justify-center gap-4 mt-8">
+              {suggestedPrompts.map((prompt, index) => (
+                <Button
+                  key={index}
+                  variant="outline"
+                  className="text-sm border-white/20 bg-white/10 text-transparent rounded-full py-2 px-4 transition-colors duration-200"
+                  onClick={() => setInputValue(prompt)}
+                >
+                  <span className="bg-clip-text bg-gradient-to-r from-[#EC795B] to-[#D672EF]">
+                    {prompt}
+                  </span>
+                </Button>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <div className="w-full max-w-3xl h-[70vh] flex flex-col">
+            <ScrollArea className="flex-grow mb-6 p-6 bg-white/10 rounded-lg backdrop-blur-sm">
+              {messages.map((message, index) => (
+                <div
+                  key={index}
+                  className={`mb-4 p-4 rounded-lg ${
+                    message.type === "user"
+                      ? "bg-[#EC795B] ml-auto"
+                      : "bg-[#D672EF]"
+                  } max-w-[80%]`}
+                >
+                  {message.content}
+                </div>
+              ))}
+            </ScrollArea>
+            <form onSubmit={handleSubmit} className="relative">
+              <Input
+                type="text"
+                placeholder="Ask a follow-up question or search..."
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                className="w-full bg-white/10 border-2 border-white/20 rounded-full py-4 px-6 pr-32 text-lg placeholder-white/50 focus:ring-2 focus:ring-[#EC795B] focus:border-transparent"
+              />
+              <Button
+                type="submit"
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-[#EC795B] hover:bg-[#D672EF] rounded-full px-4 py-2"
+              >
+                <SearchIcon className="h-5 w-5" />
+              </Button>
+            </form>
+          </div>
+        )}
       </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
     </div>
   );
 }
